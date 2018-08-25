@@ -39,19 +39,41 @@
 (defconst brutality-focus-reporting-enable-seq "\e[?1004h")
 (defconst brutality-focus-reporting-disable-seq "\e[?1004l")
 
+(defun brutality--in-tmux? ()
+  "Running in tmux."
+  (getenv "TMUX"))
+
+(defun brutality--make-tmux-seq (seq)
+  "Makes escape sequence SEQ for tmux."
+  (let ((prefix "\ePtmux;\e")
+        (suffix "\e\\"))
+    (concat prefix seq suffix seq)))
+
+(defun brutality--make-focus-reporting-seq (mode)
+  "Makes focus reporting escape sequence."
+  (let ((seq (cond ((eq mode 'on) brutality-focus-reporting-enable-seq)
+                  ((eq mode 'off) brutality-focus-reporting-disable-seq)
+                  (t nil))))
+    (if seq
+        (progn
+          (if (brutality--in-tmux?)
+              (brutality--make-tmux-seq seq)
+              seq))
+      nil)))
+
 (defun brutality--apply-to-terminal (seq)
-  "Send escape sequence SEQ to terminal."
+  "Sends escape sequence SEQ to a terminal."
   (when (and seq (stringp seq))
     (send-string-to-terminal seq)
     (send-string-to-terminal seq)))
 
 (defun brutality-enable-focus-reporting ()
   "Enables focus reporting in a terminal."
-  (brutality--apply-to-terminal brutality-focus-reporting-enable-seq))
+  (brutality--apply-to-terminal (brutality--make-focus-reporting-seq 'on)))
 
 (defun brutality-disable-focus-reporting ()
   "Disables focus reporting in a terminal."
-  (brutality--apply-to-terminal brutality-focus-reporting-disable-seq))
+  (brutality--apply-to-terminal (brutality--make-focus-reporting-seq 'off)))
 
 (global-set-key (kbd "M-[ i") (lambda () (interactive) (handle-focus-in 0)))
 (global-set-key (kbd "M-[ o") (lambda () (interactive) (handle-focus-out 0)))
