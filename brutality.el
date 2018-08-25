@@ -68,5 +68,7 @@
   (interactive)
   (brutality-disable-focus-reporting))
 
+(add-hook 'kill-emacs-hook 'brutality-deactivate)
+
 (provide 'brutality)
 ;;; brutality.el ends here
