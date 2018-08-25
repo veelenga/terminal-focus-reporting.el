@@ -24,9 +24,23 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
+;; Make Emacs play nicely with iTerm2 and tmux.
+;;
+;; This plugin restores `focus-in-hook`, `focus-out-hook` functionality.
+;; Now Emacs can save when the terminal loses a focus, even if it's inside the tmux.
+;;
 ;; Usage:
-
+;;
+;; 1. Install it
+;;
+;;      (terminal-focus-reporting :location
+;;        (recipe :fetcher github :repo "veelenga/terminal-focus-reporting.el"))
+;;
+;; 2. Add code to the emacs config file:
+;;
+;;       (unless (display-graphic-p)
+;;         (require 'terminal-focus-reporting)
+;;         (terminal-focus-reporting-activate))
 ;;; Code:
 
 (defgroup terminal-focus-reporting nil
