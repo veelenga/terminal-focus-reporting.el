@@ -67,6 +67,7 @@
     (send-string-to-terminal seq)
     (send-string-to-terminal seq)))
 
+;; These commands are sent by the terminal in focus reporting mode
 (global-set-key (kbd "M-[ i") (lambda () (interactive) (handle-focus-in 0)))
 (global-set-key (kbd "M-[ o") (lambda () (interactive) (handle-focus-out 0)))
 
@@ -81,6 +82,12 @@
   "Disables terminal focus reporting."
   (interactive)
   (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'off)))
+
+;;;###autoload
+(defalias 'tfr-on 'terminal-focus-reporting-activate)
+
+;;;###autoload
+(defalias 'tfr-off 'terminal-focus-reporting-deactivate)
 
 (add-hook 'kill-emacs-hook 'terminal-focus-reporting-deactivate)
 
