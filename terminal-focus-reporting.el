@@ -36,7 +36,7 @@
 ;;      (terminal-focus-reporting :location
 ;;        (recipe :fetcher github :repo "veelenga/terminal-focus-reporting.el"))
 ;;
-;; 2. Add code to the emacs config file:
+;; 2. Add code to the Emacs config file:
 ;;
 ;;       (unless (display-graphic-p)
 ;;         (require 'terminal-focus-reporting)
@@ -58,13 +58,13 @@
   (getenv "TMUX"))
 
 (defun terminal-focus-reporting--make-tmux-seq (seq)
-  "Makes escape sequence SEQ for tmux."
+  "Make escape sequence SEQ for tmux."
   (let ((prefix "\ePtmux;\e")
         (suffix "\e\\"))
     (concat prefix seq suffix seq)))
 
 (defun terminal-focus-reporting--make-focus-reporting-seq (mode)
-  "Makes focus reporting escape sequence."
+  "Make focus reporting escape sequence for MODE."
   (let ((seq (cond ((eq mode 'on) terminal-focus-reporting-enable-seq)
                   ((eq mode 'off) terminal-focus-reporting-disable-seq)
                   (t nil))))
@@ -76,7 +76,7 @@
       nil)))
 
 (defun terminal-focus-reporting--apply-to-terminal (seq)
-  "Sends escape sequence SEQ to a terminal."
+  "Send escape sequence SEQ to a terminal."
   (when (and seq (stringp seq))
     (send-string-to-terminal seq)
     (send-string-to-terminal seq)))
@@ -87,13 +87,13 @@
 
 ;;;###autoload
 (defun terminal-focus-reporting-activate ()
-  "Enables terminal focus reporting."
+  "Enable terminal focus reporting."
   (interactive)
   (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'on)))
 
 ;;;###autoload
 (defun terminal-focus-reporting-deactivate ()
-  "Disables terminal focus reporting."
+  "Disable terminal focus reporting."
   (interactive)
   (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'off)))
 

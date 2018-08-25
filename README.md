@@ -14,7 +14,7 @@ Now Emacs can save when the terminal loses a focus, even if it's inside the tmux
   (recipe :fetcher github :repo "veelenga/terminal-focus-reporting.el"))
 ```
 
-2. Add code to the emacs config file:
+2. Add code to the Emacs config file:
 
 ```emacs-lisp
 
