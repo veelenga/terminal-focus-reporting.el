@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-(defgroup ameba nil
+(defgroup bruntality nil
   "Make Emacs play nicely with iTerm2 and tmux"
   :prefix "brutality-"
   :group 'convenience
