@@ -29,12 +29,44 @@
 
 ;;; Code:
 
-(defgroup bruntality nil
+(defgroup brutality nil
   "Make Emacs play nicely with iTerm2 and tmux"
   :prefix "brutality-"
   :group 'convenience
   :group 'tools
-  :link '(url-link :tag "GitHub" "https://github.com/veelenga/brutality.el"))
+  :link '(url-link :tag "GitHub" "https://github.com/veelenga/brutality"))
+
+(defconst brutality-focus-reporting-enable-seq "\e[?1004h")
+(defconst brutality-focus-reporting-disable-seq "\e[?1004l")
+
+(defun brutality--apply-to-terminal (seq)
+  "Send escape sequence SEQ to terminal."
+  (when (and seq (stringp seq))
+    (send-string-to-terminal seq)
+    (send-string-to-terminal seq)))
+
+(defun brutality-enable-focus-reporting ()
+  "Enables focus reporting in a terminal."
+  (brutality--apply-to-terminal brutality-focus-reporting-enable-seq))
+
+(defun brutality-disable-focus-reporting ()
+  "Disables focus reporting in a terminal."
+  (brutality--apply-to-terminal brutality-focus-reporting-disable-seq))
+
+(global-set-key (kbd "M-[ i") (lambda () (interactive) (handle-focus-in 0)))
+(global-set-key (kbd "M-[ o") (lambda () (interactive) (handle-focus-out 0)))
+
+;;;###autoload
+(defun brutality-activate ()
+  "Enables Brutality"
+  (interactive)
+  (brutality-enable-focus-reporting))
+
+;;;###autoload
+(defun brutality-deactivate ()
+  "Disables Brutality"
+  (interactive)
+  (brutality-disable-focus-reporting))
 
 (provide 'brutality)
 ;;; brutality.el ends here
