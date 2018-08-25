@@ -1,8 +1,8 @@
-;;; brutality.el --- Make Emacs play nicely with iTerm2 and tmux.
+;;; terminal-focus-reporting.el --- Make Emacs play nicely with iTerm2 and tmux.
 
 ;; Copyright © 2018 Vitalii Elenhaupt <velenhaupt@gmail.com>
 ;; Author: Vitalii Elenhaupt
-;; URL: https://github.com/veelenga/brutality.el
+;; URL: https://github.com/veelenga/terminal-focus-reporting.el
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "24.4"))
 
@@ -29,68 +29,60 @@
 
 ;;; Code:
 
-(defgroup brutality nil
+(defgroup terminal-focus-reporting nil
   "Make Emacs play nicely with iTerm2 and tmux"
-  :prefix "brutality-"
+  :prefix "terminal-focus-reporting-"
   :group 'convenience
   :group 'tools
-  :link '(url-link :tag "GitHub" "https://github.com/veelenga/brutality"))
+  :link '(url-link :tag "GitHub" "https://github.com/veelenga/terminal-focus-reporting.el"))
 
-(defconst brutality-focus-reporting-enable-seq "\e[?1004h")
-(defconst brutality-focus-reporting-disable-seq "\e[?1004l")
+(defconst terminal-focus-reporting-enable-seq "\e[?1004h")
+(defconst terminal-focus-reporting-disable-seq "\e[?1004l")
 
-(defun brutality--in-tmux? ()
+(defun terminal-focus-reporting--in-tmux? ()
   "Running in tmux."
   (getenv "TMUX"))
 
-(defun brutality--make-tmux-seq (seq)
+(defun terminal-focus-reporting--make-tmux-seq (seq)
   "Makes escape sequence SEQ for tmux."
   (let ((prefix "\ePtmux;\e")
         (suffix "\e\\"))
     (concat prefix seq suffix seq)))
 
-(defun brutality--make-focus-reporting-seq (mode)
+(defun terminal-focus-reporting--make-focus-reporting-seq (mode)
   "Makes focus reporting escape sequence."
-  (let ((seq (cond ((eq mode 'on) brutality-focus-reporting-enable-seq)
-                  ((eq mode 'off) brutality-focus-reporting-disable-seq)
+  (let ((seq (cond ((eq mode 'on) terminal-focus-reporting-enable-seq)
+                  ((eq mode 'off) terminal-focus-reporting-disable-seq)
                   (t nil))))
     (if seq
         (progn
-          (if (brutality--in-tmux?)
-              (brutality--make-tmux-seq seq)
+          (if (terminal-focus-reporting--in-tmux?)
+              (terminal-focus-reporting--make-tmux-seq seq)
               seq))
       nil)))
 
-(defun brutality--apply-to-terminal (seq)
+(defun terminal-focus-reporting--apply-to-terminal (seq)
   "Sends escape sequence SEQ to a terminal."
   (when (and seq (stringp seq))
     (send-string-to-terminal seq)
     (send-string-to-terminal seq)))
 
-(defun brutality-enable-focus-reporting ()
-  "Enables focus reporting in a terminal."
-  (brutality--apply-to-terminal (brutality--make-focus-reporting-seq 'on)))
-
-(defun brutality-disable-focus-reporting ()
-  "Disables focus reporting in a terminal."
-  (brutality--apply-to-terminal (brutality--make-focus-reporting-seq 'off)))
-
 (global-set-key (kbd "M-[ i") (lambda () (interactive) (handle-focus-in 0)))
 (global-set-key (kbd "M-[ o") (lambda () (interactive) (handle-focus-out 0)))
 
 ;;;###autoload
-(defun brutality-activate ()
-  "Enables Brutality"
+(defun terminal-focus-reporting-activate ()
+  "Enables terminal focus reporting."
   (interactive)
-  (brutality-enable-focus-reporting))
+  (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'on)))
 
 ;;;###autoload
-(defun brutality-deactivate ()
-  "Disables Brutality"
+(defun terminal-focus-reporting-deactivate ()
+  "Disables terminal focus reporting."
   (interactive)
-  (brutality-disable-focus-reporting))
+  (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'off)))
 
-(add-hook 'kill-emacs-hook 'brutality-deactivate)
+(add-hook 'kill-emacs-hook 'terminal-focus-reporting-deactivate)
 
-(provide 'brutality)
-;;; brutality.el ends here
+(provide 'terminal-focus-reporting)
+;;; terminal-focus-reporting.el ends here
