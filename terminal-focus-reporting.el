@@ -87,16 +87,6 @@
   (terminal-focus-reporting--apply-to-terminal
    (terminal-focus-reporting--make-focus-reporting-seq 'off)))
 
-(defun terminal-focus-reporting--toggle ()
-  "Toggle terminal focus reporting feature.
-Based on a terminal focus reporting minor mode status."
-  (if (bound-and-true-p terminal-focus-reporting-mode)
-      (progn
-        (terminal-focus-reporting--activate)
-        (add-hook 'kill-emacs-hook 'terminal-focus-reporting--deactivate))
-    (terminal-focus-reporting--deactivate)
-    (remove-hook 'kill-emacs-hook 'terminal-focus-reporting--deactivate)))
-
 ;;; Minor mode
 (defcustom terminal-focus-reporting-keymap-prefix (kbd "M-[")
   "Terminal focus reporting keymap prefix."
@@ -118,7 +108,12 @@ Based on a terminal focus reporting minor mode status."
   :init-value nil
   :lighter " Terminal Focus Reporting"
   :group 'terminal-focus-reporting
-  :after-hook (terminal-focus-reporting--toggle))
+  (if terminal-focus-reporting-mode
+      (progn
+        (terminal-focus-reporting--activate)
+        (add-hook 'kill-emacs-hook 'terminal-focus-reporting--deactivate))
+    (terminal-focus-reporting--deactivate)
+    (remove-hook 'kill-emacs-hook 'terminal-focus-reporting--deactivate)))
 
 (provide 'terminal-focus-reporting)
 ;;; terminal-focus-reporting.el ends here
