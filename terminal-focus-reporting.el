@@ -1,4 +1,4 @@
-;;; terminal-focus-reporting.el --- Make Emacs play nicely with iTerm2 and tmux.
+;;; terminal-focus-reporting.el --- Minor mode for terminal focus reporting.
 
 ;; Copyright © 2018 Vitalii Elenhaupt <velenhaupt@gmail.com>
 ;; Author: Vitalii Elenhaupt
@@ -25,27 +25,22 @@
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; Make Emacs play nicely with iTerm2 and tmux.
+;; Minor mode for terminal focus reporting.
 ;;
 ;; This plugin restores `focus-in-hook`, `focus-out-hook` functionality.
-;; Now Emacs can save when the terminal loses a focus, even if it's inside the tmux.
+;; Now Emacs can, for example, save when the terminal loses a focus, even if it's inside the tmux.
 ;;
 ;; Usage:
 ;;
-;; 1. Install it
-;;
-;;      (terminal-focus-reporting :location
-;;        (recipe :fetcher github :repo "veelenga/terminal-focus-reporting.el"))
-;;
-;; 2. Add code to the Emacs config file:
+;; Add code to the Emacs config file:
 ;;
 ;;       (unless (display-graphic-p)
 ;;         (require 'terminal-focus-reporting)
-;;         (terminal-focus-reporting-activate))
+;;         (terminal-focus-reporting-mode))
 ;;; Code:
 
 (defgroup terminal-focus-reporting nil
-  "Make Emacs play nicely with iTerm2 and tmux"
+  "Minor mode for terminal focus reporting."
   :prefix "terminal-focus-reporting-"
   :group 'convenience
   :group 'tools
@@ -74,7 +69,7 @@
           (if (terminal-focus-reporting--in-tmux?)
               (terminal-focus-reporting--make-tmux-seq seq)
               seq))
-      nil)))
+        nil)))
 
 (defun terminal-focus-reporting--apply-to-terminal (seq)
   "Send escape sequence SEQ to a terminal."
@@ -82,29 +77,47 @@
     (send-string-to-terminal seq)
     (send-string-to-terminal seq)))
 
-;; These commands are sent by the terminal in focus reporting mode
-(global-set-key (kbd "M-[ i") (lambda () (interactive) (handle-focus-in 0)))
-(global-set-key (kbd "M-[ o") (lambda () (interactive) (handle-focus-out 0)))
-
-;;;###autoload
-(defun terminal-focus-reporting-activate ()
+(defun terminal-focus-reporting--activate ()
   "Enable terminal focus reporting."
   (interactive)
-  (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'on)))
+  (terminal-focus-reporting--apply-to-terminal
+   (terminal-focus-reporting--make-focus-reporting-seq 'on)))
 
-;;;###autoload
-(defun terminal-focus-reporting-deactivate ()
+(defun terminal-focus-reporting--deactivate ()
   "Disable terminal focus reporting."
   (interactive)
-  (terminal-focus-reporting--apply-to-terminal (terminal-focus-reporting--make-focus-reporting-seq 'off)))
+  (terminal-focus-reporting--apply-to-terminal
+   (terminal-focus-reporting--make-focus-reporting-seq 'off)))
 
-;;;###autoload
-(defalias 'tfr-on 'terminal-focus-reporting-activate)
+(defun terminal-focus-reporting--toggle ()
+  "Toggle terminal focus reporting feature.
+Based on a terminal focus reporting minor mode status."
+  (if (bound-and-true-p terminal-focus-reporting-mode)
+      (terminal-focus-reporting--activate)
+      (terminal-focus-reporting--deactivate)))
 
-;;;###autoload
-(defalias 'tfr-off 'terminal-focus-reporting-deactivate)
+;;; Minor mode
+(defcustom terminal-focus-reporting-keymap-prefix (kbd "M-[")
+  "Terminal focus reporting keymap prefix."
+  :group 'terminal-focus-reporting
+  :type 'string)
 
-(add-hook 'kill-emacs-hook 'terminal-focus-reporting-deactivate)
+(defvar terminal-focus-reporting-mode-map
+  (let ((map (make-sparse-keymap)))
+    (let ((prefix-map (make-sparse-keymap)))
+      (define-key prefix-map (kbd "i") (lambda () (interactive) (handle-focus-in 0)))
+      (define-key prefix-map (kbd "o") (lambda () (interactive) (handle-focus-out 0)))
+      (define-key map terminal-focus-reporting-keymap-prefix prefix-map))
+    map)
+  "Keymap for Terminal Focus Reporting mode.")
+
+(define-minor-mode terminal-focus-reporting-mode
+  "Minor mode for terminal focus reporting integration."
+  :lighter " Terminal Focus Reporting"
+  :group 'terminal-focus-reporting)
+
+(add-hook 'kill-emacs-hook 'terminal-focus-reporting--deactivate)
+(add-hook 'terminal-focus-reporting-mode-hook 'terminal-focus-reporting--toggle)
 
 (provide 'terminal-focus-reporting)
 ;;; terminal-focus-reporting.el ends here
