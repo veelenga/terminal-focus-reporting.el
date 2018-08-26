@@ -1,4 +1,4 @@
-;;; terminal-focus-reporting.el --- Minor mode for terminal focus reporting.
+;;; terminal-focus-reporting.el --- Minor mode for terminal focus reporting. -*- lexical-binding: t; -*-
 
 ;; Copyright © 2018 Vitalii Elenhaupt <velenhaupt@gmail.com>
 ;; Author: Vitalii Elenhaupt
@@ -39,8 +39,6 @@
 ;;         (terminal-focus-reporting-mode))
 ;;; Code:
 
-(setq lexical-binding t)
-
 (defgroup terminal-focus-reporting nil
   "Minor mode for terminal focus reporting."
   :prefix "terminal-focus-reporting-"
@@ -64,14 +62,14 @@
 (defun terminal-focus-reporting--make-focus-reporting-seq (mode)
   "Make focus reporting escape sequence for MODE."
   (let ((seq (cond ((eq mode 'on) terminal-focus-reporting-enable-seq)
-                  ((eq mode 'off) terminal-focus-reporting-disable-seq)
-                  (t nil))))
+                   ((eq mode 'off) terminal-focus-reporting-disable-seq)
+                   (t nil))))
     (if seq
         (progn
           (if (terminal-focus-reporting--in-tmux?)
               (terminal-focus-reporting--make-tmux-seq seq)
-              seq))
-        nil)))
+            seq))
+      nil)))
 
 (defun terminal-focus-reporting--apply-to-terminal (seq)
   "Send escape sequence SEQ to a terminal."
@@ -96,7 +94,7 @@
 Based on a terminal focus reporting minor mode status."
   (if (bound-and-true-p terminal-focus-reporting-mode)
       (terminal-focus-reporting--activate)
-      (terminal-focus-reporting--deactivate)))
+    (terminal-focus-reporting--deactivate)))
 
 ;;; Minor mode
 (defcustom terminal-focus-reporting-keymap-prefix (kbd "M-[")
