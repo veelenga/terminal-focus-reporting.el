@@ -39,6 +39,8 @@
 ;;         (terminal-focus-reporting-mode))
 ;;; Code:
 
+(setq lexical-binding t)
+
 (defgroup terminal-focus-reporting nil
   "Minor mode for terminal focus reporting."
   :prefix "terminal-focus-reporting-"
