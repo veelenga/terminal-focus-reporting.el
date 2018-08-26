@@ -12,6 +12,5 @@ Add code to the Emacs config file:
 ```emacs-lisp
 
 (unless (display-graphic-p)
-  (require 'terminal-focus-reporting)
   (terminal-focus-reporting-mode))
 ```

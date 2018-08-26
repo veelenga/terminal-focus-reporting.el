@@ -113,6 +113,7 @@ Based on a terminal focus reporting minor mode status."
     map)
   "Keymap for Terminal Focus Reporting mode.")
 
+;;;###autoload
 (define-minor-mode terminal-focus-reporting-mode
   "Minor mode for terminal focus reporting integration."
   :lighter " Terminal Focus Reporting"
