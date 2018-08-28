@@ -106,6 +106,7 @@
 (define-minor-mode terminal-focus-reporting-mode
   "Minor mode for terminal focus reporting integration."
   :init-value nil
+  :global t
   :lighter " Terminal Focus Reporting"
   :group 'terminal-focus-reporting
   (if terminal-focus-reporting-mode
