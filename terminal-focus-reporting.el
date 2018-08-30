@@ -32,7 +32,9 @@
 ;;
 ;; Usage:
 ;;
-;; Add code to the Emacs config file:
+;; 1. Install it from Melpa
+;;
+;; 2. Add code to the Emacs config file:
 ;;
 ;;       (unless (display-graphic-p)
 ;;         (require 'terminal-focus-reporting)
