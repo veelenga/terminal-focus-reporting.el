@@ -7,6 +7,12 @@ Minor mode for terminal focus reporting.
 This plugin restores `focus-in-hook`, `focus-out-hook` functionality.
 Now Emacs can, for example, save when the terminal loses a focus, even if it's inside the tmux.
 
+**You don't need this plugin for latest Emacs. Since Emacs 27 it now requests and recognizes focus-change notifications from TTYs. You would rather need to hook the after focus change:**
+
+``` emacs-lisp
+(add-function :after after-focus-change-function (lambda () (save-some-buffers t)))
+```
+
 ## Usage
 
 1. Install it from Melpa
